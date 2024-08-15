@@ -66,12 +66,28 @@ public class CzHttpApiHostModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
 
         ConfigureAuthentication(context);
+        ConfigureSocialLogins(context, configuration);
         ConfigureBundles();
         ConfigureUrls(configuration);
         ConfigureConventionalControllers();
         ConfigureVirtualFileSystem(context);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
+    }
+
+    private void ConfigureSocialLogins(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        if (configuration["Authentication:Facebook:IsEnabled"] == "true")
+        {
+            Console.WriteLine("Facebook authentication is enabled");
+            context.Services.AddAuthentication()
+            .AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = configuration["Authentication:Facebook:AppId"]!.ToString();
+                facebookOptions.AppSecret = configuration["Authentication:Facebook:AppSecret"]!.ToString();
+            });
+        }
+
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)

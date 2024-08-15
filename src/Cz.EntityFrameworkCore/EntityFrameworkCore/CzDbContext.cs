@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Cz.Books;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -24,7 +26,7 @@ public class CzDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
-
+    public DbSet<Book> Books { get; set; } 
     #region Entities from the modules
 
     /* Notice: We only implemented IIdentityDbContext and ITenantManagementDbContext
@@ -75,7 +77,15 @@ public class CzDbContext :
         builder.ConfigureTenantManagement();
 
         /* Configure your own tables/entities inside here */
-
+        builder.Entity<Book>(b =>
+        {
+            b.ToTable(CzConsts.DbTablePrefix + "Books", CzConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Name).IsRequired().HasMaxLength(256);
+            b.Property(x => x.BookType);
+            b.Property(x => x.PublishDate);
+            b.Property(x => x.Price).HasPrecision(8,2).HasDefaultValue(0);
+        });
         //builder.Entity<YourEntity>(b =>
         //{
         //    b.ToTable(CzConsts.DbTablePrefix + "YourEntities", CzConsts.DbSchema);

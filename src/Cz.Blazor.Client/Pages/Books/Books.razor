@@ -1,0 +1,35 @@
+﻿@page "/books"
+@inject IStringLocalizer<CzResource> L
+@using Cz.Books
+@using Cz.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Users
+@inject ICurrentUser CurrentUser
+
+
+<Card>
+    <CardHeader>
+        <CardTitle>Books</CardTitle>
+    </CardHeader>
+    <CardBody>
+        <p>@L["Books"]</p>
+
+        @* ************************* DATA GRID ************************* *@
+        <DataGrid TItem="BookDto"
+                  Data="BookDtoList"
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  PageSize="PageSize"
+                  ShowPager="true">
+            <DataGridColumns>
+                <DataGridColumn TItem="BookDto" Field="@nameof(BookDto.Name)" Caption="@L["Name"]" />
+                <DataGridColumn TItem="BookDto" Field="@nameof(BookDto.BookType)" Caption="@L["BookType"]" />
+                <DataGridColumn TItem="BookDto" Field="@nameof(BookDto.Price)" Caption="@L["Price"]" />
+                <DataGridColumn TItem="BookDto" Field="@nameof(BookDto.PublishDate)" Caption="@L["Published"]" />
+                <DataGridColumn TItem="BookDto" Field="@nameof(BookDto.TenantId)" Caption="@L["Tenant"]" />
+            </DataGridColumns>
+        </DataGrid>
+
+
+    </CardBody>
+</Card>

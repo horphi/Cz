@@ -4,6 +4,7 @@ using Cz.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Cz.Migrations
 {
     [DbContext(typeof(CzDbContext))]
-    partial class CzDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240815135536_Create_book_entity")]
+    partial class Create_book_entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,10 +90,6 @@ namespace Cz.Migrations
 
                     b.Property<DateTime>("PublishDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<Guid?>("TenantId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("TenantId");
 
                     b.HasKey("Id");
 

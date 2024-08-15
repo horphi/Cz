@@ -47,6 +47,20 @@ public class CzMenuContributor : IMenuContributor
             )
         );
 
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                "Books",
+                l["Menu:Books"],
+                icon: "fas fa-book"
+            ).AddItem(
+                new ApplicationMenuItem(
+                    "Books.Books",
+                    l["Menu:Books"],
+                    url: "/books"
+                )
+            )
+         );
+
         var administration = context.Menu.GetAdministration();
 
         if (MultiTenancyConsts.IsEnabled)

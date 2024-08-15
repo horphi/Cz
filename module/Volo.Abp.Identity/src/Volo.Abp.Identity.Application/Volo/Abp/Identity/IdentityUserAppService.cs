@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.ObjectExtending;
 
 namespace Volo.Abp.Identity;
@@ -18,13 +19,18 @@ public class IdentityUserAppService : IdentityAppServiceBase, IIdentityUserAppSe
     protected IIdentityRoleRepository RoleRepository { get; }
     protected IOptions<IdentityOptions> IdentityOptions { get; }
     protected IPermissionChecker PermissionChecker { get; }
+    protected IDataFilter _dataFilter { get; }
+
+
     public IdentityUserAppService(
+        IDataFilter dataFilter,
         IdentityUserManager userManager,
         IIdentityUserRepository userRepository,
         IIdentityRoleRepository roleRepository,
         IOptions<IdentityOptions> identityOptions,
         IPermissionChecker permissionChecker)
     {
+        _dataFilter = dataFilter;
         UserManager = userManager;
         UserRepository = userRepository;
         RoleRepository = roleRepository;
@@ -44,12 +50,31 @@ public class IdentityUserAppService : IdentityAppServiceBase, IIdentityUserAppSe
     [Authorize(IdentityPermissions.Users.Default)]
     public virtual async Task<PagedResultDto<IdentityUserDto>> GetListAsync(GetIdentityUsersInput input)
     {
-        var count = await UserRepository.GetCountAsync(input.Filter);
-        var list = await UserRepository.GetListAsync(input.Sorting, input.MaxResultCount, input.SkipCount, input.Filter);
+        long count = 0;
+        var currentUser = CurrentUser;
+        var resultList = new List<IdentityUser>();
+
+        //Host users can see all users.
+        if (currentUser.TenantId == null)
+        {
+            using (_dataFilter.Disable<IMultiTenant>())
+            {
+                count = await UserRepository.GetCountAsync(input.Filter);
+                resultList = await UserRepository.GetListAsync(input.Sorting, input.MaxResultCount, input.SkipCount, input.Filter);
+            }
+
+            return new PagedResultDto<IdentityUserDto>(
+                count,
+                ObjectMapper.Map<List<IdentityUser>, List<IdentityUserDto>>(resultList)
+            );
+        }
+
+        count = await UserRepository.GetCountAsync(input.Filter);
+        resultList = await UserRepository.GetListAsync(input.Sorting, input.MaxResultCount, input.SkipCount, input.Filter);
 
         return new PagedResultDto<IdentityUserDto>(
             count,
-            ObjectMapper.Map<List<IdentityUser>, List<IdentityUserDto>>(list)
+            ObjectMapper.Map<List<IdentityUser>, List<IdentityUserDto>>(resultList)
         );
     }
 

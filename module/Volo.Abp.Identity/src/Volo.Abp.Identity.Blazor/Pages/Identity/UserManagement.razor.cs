@@ -224,6 +224,12 @@ public partial class UserManagement
                         Title = L["PhoneNumber"],
                         Data = nameof(IdentityUserDto.PhoneNumber),
                         Sortable = true,
+                    },
+                    new TableColumn
+                    {
+                        Title = "Tenant",
+                        Data = nameof(IdentityUserDto.TenantId),
+                        Sortable = true,
                     }
             });
 

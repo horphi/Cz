@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Volo.Abp.SettingManagement.Domain.Shared\Volo.Abp.SettingManagement.Domain.Shared.csproj" />
+    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="8.2.1" />
+    <PackageReference Include="Volo.Abp.Authorization.Abstractions" Version="8.2.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Volo\Abp\SettingManagement\Localization\ApplicationContracts\*.json" />
+    <Content Remove="Volo\Abp\SettingManagement\Localization\ApplicationContracts\*.json" />
+  </ItemGroup>
+</Project>
